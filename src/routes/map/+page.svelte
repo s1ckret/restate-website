@@ -1,17 +1,18 @@
 <script lang="ts">
+  import type { PageData } from './$types';
   import { onMount } from 'svelte';
-  import type { Map } from 'leaflet';
   import AdCard from '../../lib/AdCard.svelte';
   import Pagination from '$lib/Pagination.svelte';
 
-  // import createMap from './map.client';
+  export let data: PageData;
 
-  const MAP_ID = 'map';
+  $: ({ buildings } = data);
 
   onMount(async () => {
     if (typeof window !== 'undefined') {
-      const createMap = await import('./map.client');
-      const map: Map | null = createMap.default(MAP_ID, { center: [51.505, -0.09], zoom: 13 });
+      const mapLib = await import('./map.client');
+      mapLib.create('map', { center: [49.98851927159875, 36.25307152594603], zoom: 13 });
+      buildings.forEach((it) => mapLib.addGeoJSON(it.id, it.geojson));
     }
   });
 </script>

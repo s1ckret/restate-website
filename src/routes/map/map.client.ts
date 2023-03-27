@@ -3,9 +3,11 @@ import type { MapOptions } from 'leaflet';
 
 type CreateMapFn = (mapId: string, options: MapOptions) => Map | null;
 
-const createMap: CreateMapFn = (mapId, options) => {
+let map: Map;
+
+const create: CreateMapFn = (mapId, options) => {
   // Initialize the map
-  const map = L.map(mapId, options);
+  map = L.map(mapId, options);
 
   // Add a tile layer to the map
   const tileLayerUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -24,4 +26,16 @@ const createMap: CreateMapFn = (mapId, options) => {
   return map;
 };
 
-export default createMap;
+function addGeoJSON(id: number, geojson: any) {
+  L.geoJson(geojson, {
+    onEachFeature: (feature, layer) => {
+      layer.on({
+        click: (e) => {
+          console.log(id);
+        }
+      });
+    }
+  }).addTo(map);
+}
+
+export { create, addGeoJSON };
