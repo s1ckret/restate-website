@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import type { Map } from 'leaflet';
   import AdCard from '../../lib/AdCard.svelte';
+  import Pagination from '$lib/Pagination.svelte';
 
   // import createMap from './map.client';
 
@@ -26,6 +27,9 @@
   <div class="column is-one-half" style="height: 86vh;">
     <AdCard />
     <AdCard />
+    <div class="container" style="margin-top: 2.5rem!important;">
+      <Pagination />
+    </div>
   </div>
 
   <div class="column is-one-half p-0">
