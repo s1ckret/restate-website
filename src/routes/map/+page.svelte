@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { Map } from 'leaflet';
+  import AdCard from '../../lib/AdCard.svelte';
 
   // import createMap from './map.client';
 
@@ -21,10 +22,14 @@
   crossorigin=""
 />
 
-<div class="columns is-gapless">
-  <div class="column is-one-third" />
-  <div class="column is-two-thirds">
-    <div id="map" style="height: 100vh;" />
+<div class="columns is-variable is-6">
+  <div class="column is-one-half" style="height: 86vh;">
+    <AdCard />
+    <AdCard />
+  </div>
+
+  <div class="column is-one-half p-0">
+    <div id="map" style="height: 86vh;" />
   </div>
 </div>
 
@@ -37,5 +42,9 @@
   .columns {
     width: 100%;
     margin: 0;
+  }
+
+  .column {
+    overflow-y: auto;
   }
 </style>
