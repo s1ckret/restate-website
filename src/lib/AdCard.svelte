@@ -1,13 +1,75 @@
 <script>
-  import Carousel from 'svelte-carousel';
+  import { browser } from '$app/environment';
+  import { onMount } from 'svelte';
+
+  let Carousel;
+  onMount(async () => {
+    const module = await import('svelte-carousel');
+    Carousel = module.default;
+  });
+
+  const items = [
+    {
+      name: 'Leonardo',
+      age: 26,
+      location: 'Italy'
+    },
+    {
+      name: 'Maria',
+      age: 27,
+      location: 'Brazil'
+    },
+    {
+      name: 'Oliver',
+      age: 28,
+      location: 'United States'
+    },
+    {
+      name: 'Margarida',
+      age: 29,
+      location: 'Portugal'
+    }
+  ];
 </script>
 
 <div class="card">
   <div class="card-content">
     <div class="media">
       <div class="media-left">
-        <figure class="image">
-          <img src="https://bulma.io/images/placeholders/128x128.png" alt="Placeholder image" />
+        <figure class="image is-align-content-center">
+          {#if browser}
+            <svelte:component
+              this={Carousel}
+              let:showPrevPage
+              let:showNextPage
+              autoplay
+              autoplayDuration={5000}
+              autoplayProgressVisible
+              pauseOnFocus
+            >
+              <button
+                class="cb is-left button is-light is-small is-rounded"
+                type="button"
+                slot="prev"
+                on:click={showPrevPage}
+              >
+                &LongLeftArrow;
+              </button>
+              <!-- {#each items as item, i (item.name)} -->
+              <img src="https://bulma.io/images/placeholders/128x128.png" alt="Placeholder image" />
+              <img src="https://bulma.io/images/placeholders/128x128.png" alt="Placeholder image" />
+              <img src="https://bulma.io/images/placeholders/128x128.png" alt="Placeholder image" />
+              <!-- {/each} -->
+              <button
+                class="cb is-right button is-light is-small is-rounded"
+                type="button"
+                slot="next"
+                on:click={showNextPage}
+              >
+                &LongRightArrow;
+              </button>
+            </svelte:component>
+          {/if}
         </figure>
       </div>
       <div class="media-content">
@@ -55,5 +117,21 @@
 
   .field.is-grouped {
     justify-content: flex-end !important;
+  }
+
+  .cb {
+    position: absolute;
+    top: 50%;
+    z-index: 999;
+    transform: translateY(-50%);
+    width: 16px;
+  }
+
+  .is-left {
+    left: 0;
+  }
+
+  .is-right {
+    right: 0;
   }
 </style>
