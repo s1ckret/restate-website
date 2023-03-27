@@ -6,7 +6,7 @@
 
   export let data: PageData;
 
-  $: ({ buildings } = data);
+  $: ({ buildings, ads } = data);
 
   onMount(async () => {
     if (typeof window !== 'undefined') {
@@ -26,8 +26,22 @@
 
 <div class="columns is-variable is-6">
   <div class="column is-one-half" style="height: 86vh;">
-    <AdCard />
-    <AdCard />
+    {#each ads as ad}
+      <AdCard
+        title={ad.title}
+        price={ad.price}
+        currency={ad.currency}
+        area={ad.totalArea}
+        atFloor={ad.atFloor}
+        maxFloor={ad.building.maxFloors}
+        street={ad.building.street}
+        houseNumber={ad.building.houseNumber}
+        roomQty={ad.roomQty}
+        foundAt={ad.foundAtSec * 1000}
+        postedAt={ad.postedAtSec * 1000}
+        imageUrls={ad.photo.map((it) => it.key)}
+      />
+    {/each}
     <div class="container" style="margin-top: 2.5rem!important;">
       <Pagination />
     </div>

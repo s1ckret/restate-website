@@ -1,6 +1,19 @@
-<script>
+<script lang="ts">
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
+
+  export let title: string;
+  export let price: number;
+  export let currency: string;
+  export let roomQty: number;
+  export let area: number;
+  export let atFloor: number;
+  export let maxFloor: number | null;
+  export let street: string;
+  export let houseNumber: string;
+  export let foundAt: number;
+  export let postedAt: number;
+  export let imageUrls: string[];
 
   let Carousel;
   onMount(async () => {
@@ -48,20 +61,21 @@
               pauseOnFocus
             >
               <button
-                class="cb is-left button is-light is-small is-rounded"
+                class="cb is-left button is-link is-small is-rounded"
                 type="button"
                 slot="prev"
                 on:click={showPrevPage}
               >
                 &LongLeftArrow;
               </button>
-              <!-- {#each items as item, i (item.name)} -->
-              <img src="https://bulma.io/images/placeholders/128x128.png" alt="Placeholder image" />
-              <img src="https://bulma.io/images/placeholders/128x128.png" alt="Placeholder image" />
-              <img src="https://bulma.io/images/placeholders/128x128.png" alt="Placeholder image" />
-              <!-- {/each} -->
+              {#each imageUrls as url}
+                <img
+                  class="image"
+                  src={`https://restate-photos.s3.eu-north-1.amazonaws.com/${url}`}
+                />
+              {/each}
               <button
-                class="cb is-right button is-light is-small is-rounded"
+                class="cb is-right button is-link is-small is-rounded"
                 type="button"
                 slot="next"
                 on:click={showNextPage}
@@ -73,19 +87,19 @@
         </figure>
       </div>
       <div class="media-content">
-        <p class="title is-4">[333819] Продається 3-кімнатна квартира Захисників України</p>
-        <p class="subtitle mb-2">провулок Іскринський 19</p>
+        <p class="title is-4">{title}</p>
+        <p class="subtitle mb-2">{street} {houseNumber}</p>
         <div class="columns is-multiline is-gapless">
-          <div class="column is-full"><p>💵 95000 $</p></div>
-          <div class="column is-full"><p>#️⃣ 3 кімнати</p></div>
-          <div class="column is-full"><p>🔲 96.0м²</p></div>
-          <div class="column is-full"><p>📶 Поверх: 1/16</p></div>
+          <div class="column is-full"><p>💵 {price} {currency}</p></div>
+          <div class="column is-full"><p>#️⃣ {roomQty} кімнати</p></div>
+          <div class="column is-full"><p>🔲 {area}м²</p></div>
+          <div class="column is-full"><p>📶 Поверх: {atFloor}/{maxFloor}</p></div>
         </div>
         <p class="subtitle is-7 mt-3 mb-0 has-text-left">
-          Створено: <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+          Створено: <time datetime="2016-1-1">{new Date(postedAt).toLocaleString()}</time>
         </p>
         <p class="subtitle is-7 mb-3 has-text-left">
-          Знайдено: <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+          Знайдено: <time datetime="2016-1-1">{new Date(foundAt).toLocaleString()}</time>
         </p>
         <div class="container">
           <div class="field is-grouped mb-2">
