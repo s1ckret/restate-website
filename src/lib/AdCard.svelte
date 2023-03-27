@@ -51,38 +51,40 @@
       <div class="media-left">
         <figure class="image is-align-content-center">
           {#if browser}
-            <svelte:component
-              this={Carousel}
-              let:showPrevPage
-              let:showNextPage
-              autoplay
-              autoplayDuration={5000}
-              autoplayProgressVisible
-              pauseOnFocus
-            >
-              <button
-                class="cb is-left button is-link is-small is-rounded"
-                type="button"
-                slot="prev"
-                on:click={showPrevPage}
+            {#key imageUrls}
+              <svelte:component
+                this={Carousel}
+                let:showPrevPage
+                let:showNextPage
+                autoplay
+                autoplayDuration={5000}
+                autoplayProgressVisible
+                pauseOnFocus
               >
-                &LongLeftArrow;
-              </button>
-              {#each imageUrls as url}
-                <img
-                  class="image"
-                  src={`https://restate-photos.s3.eu-north-1.amazonaws.com/${url}`}
-                />
-              {/each}
-              <button
-                class="cb is-right button is-link is-small is-rounded"
-                type="button"
-                slot="next"
-                on:click={showNextPage}
-              >
-                &LongRightArrow;
-              </button>
-            </svelte:component>
+                <button
+                  class="cb is-left button is-link is-small is-rounded"
+                  type="button"
+                  slot="prev"
+                  on:click={showPrevPage}
+                >
+                  &LongLeftArrow;
+                </button>
+                {#each imageUrls as url}
+                  <img
+                    class="image"
+                    src={`https://restate-photos.s3.eu-north-1.amazonaws.com/${url}`}
+                  />
+                {/each}
+                <button
+                  class="cb is-right button is-link is-small is-rounded"
+                  type="button"
+                  slot="next"
+                  on:click={showNextPage}
+                >
+                  &LongRightArrow;
+                </button>
+              </svelte:component>
+            {/key}
           {/if}
         </figure>
       </div>

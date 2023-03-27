@@ -3,5 +3,5 @@
   <h2 class="subtitle">
     Our product uses advanced object detection technology to make apartment hunting a breeze.
   </h2>
-  <a href="/map" class="button is-large is-link"> Try Our Map </a>
+  <a href="/map?page=1" class="button is-large is-link"> Try Our Map </a>
 </div>

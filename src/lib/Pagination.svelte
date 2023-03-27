@@ -1,8 +1,8 @@
 <script lang="ts">
-  let pages = 100;
+  export let pages = 100;
+  export let currentPage = 1;
   let minPage = 1;
   let maxPage = pages;
-  let currentPage = 1;
   let previousButtonDisabled = false;
   let nextButtonDisabled = false;
 
@@ -44,7 +44,11 @@
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
   <ul class="pagination-list">
     {#if !previousButtonDisabled}
-      <li><a class="pagination-previous" on:click={previousPage}>Previous</a></li>
+      <li>
+        <a class="pagination-previous" href="/map?page={currentPage}" on:click={previousPage}
+          >Previous</a
+        >
+      </li>
     {:else}
       <li>
         <a
@@ -59,6 +63,7 @@
       <li>
         <a
           class="pagination-link"
+          href="/map?page={minPage}"
           on:click={() => goToPage(minPage)}
           aria-label="Goto page {minPage}">{minPage}</a
         >
@@ -71,8 +76,11 @@
 
     {#if leftPageVisible}
       <li>
-        <a class="pagination-link" on:click={previousPage} aria-label="Goto page {currentPage - 1}"
-          >{currentPage - 1}</a
+        <a
+          class="pagination-link"
+          on:click={previousPage}
+          href="/map?page={currentPage}"
+          aria-label="Goto page {currentPage - 1}">{currentPage - 1}</a
         >
       </li>
     {:else}
@@ -80,14 +88,20 @@
     {/if}
 
     <li>
-      <a class="pagination-link is-current" aria-label="Page {currentPage}" aria-current="page"
-        >{currentPage}</a
+      <a
+        class="pagination-link is-current"
+        href="/map?page={currentPage}"
+        aria-label="Page {currentPage}"
+        aria-current="page">{currentPage}</a
       >
     </li>
     {#if rightPageVisible}
       <li>
-        <a class="pagination-link" on:click={nextPage} aria-label="Goto page {currentPage + 1}"
-          >{currentPage + 1}</a
+        <a
+          class="pagination-link"
+          href="/map?page={currentPage}"
+          on:click={nextPage}
+          aria-label="Goto page {currentPage + 1}">{currentPage + 1}</a
         >
       </li>
     {:else}
@@ -101,6 +115,7 @@
       <li>
         <a
           class="pagination-link"
+          href="/map?page={maxPage}"
           on:click={() => goToPage(maxPage)}
           aria-label="Goto page {maxPage}">{maxPage}</a
         >
@@ -113,7 +128,9 @@
     {/if}
 
     {#if !nextButtonDisabled}
-      <li><a class="pagination-next" on:click={nextPage}>Next page</a></li>
+      <li>
+        <a class="pagination-next" href="/map?page={currentPage}" on:click={nextPage}>Next page</a>
+      </li>
     {:else}
       <li>
         <a class="pagination-next is-disabled" title="This is the last page" on:click={nextPage}

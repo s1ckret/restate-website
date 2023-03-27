@@ -6,7 +6,8 @@
 
   export let data: PageData;
 
-  $: ({ buildings, ads } = data);
+  $: ({ buildings } = data);
+  $: ({ ads, pages, page } = data);
 
   onMount(async () => {
     if (typeof window !== 'undefined') {
@@ -43,7 +44,7 @@
       />
     {/each}
     <div class="container" style="margin-top: 2.5rem!important;">
-      <Pagination />
+      <Pagination {pages} currentPage={page} />
     </div>
   </div>
 

@@ -2,9 +2,13 @@ import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 
 export const GET = (async ({ url }) => {
-  const page = Number(url.searchParams.get('page') ?? '0');
+  const page = Number(url.searchParams.get('page') ?? '1');
   const limit = Number(url.searchParams.get('limit') ?? '2');
   const buildingId = Number(url.searchParams.get('buildingId') ?? '0');
+
+  if (page < 1) {
+    throw new Error(`Page parameter should be positive!`);
+  }
 
   if (limit <= 0 || limit > 20) {
     return new Response(`Limit parameter should be in range [1, 20]!`, { status: 400 });
@@ -17,9 +21,9 @@ export const GET = (async ({ url }) => {
   try {
     let ads;
     if (buildingId != 0) {
-      ads = await getPageByBuildingId(page, limit, buildingId);
+      ads = await getPageByBuildingId(page - 1, limit, buildingId);
     } else {
-      ads = await getPage(page, limit);
+      ads = await getPage(page - 1, limit);
     }
     return new Response(JSON.stringify(ads), { status: 200 });
   } catch (e) {
@@ -35,7 +39,7 @@ async function getPage(page: number, limit: number) {
   const pages = Math.floor(adCount / limit);
 
   if (page < 0 || page > pages) {
-    throw new Error(`Page parameter should be in range [0, ${pages}]!`);
+    throw new Error(`Page parameter should be in range [1, ${pages + 1}]!`);
   }
 
   const firstId = 1 + page * limit;
@@ -75,7 +79,7 @@ async function getPageByBuildingId(page: number, limit: number, buildingId: numb
   const pages = Math.floor(adCount / limit);
 
   if (page < 0 || page > pages) {
-    throw new Error(`Page parameter should be in range [0, ${pages}]!`);
+    throw new Error(`Page parameter should be in range [1, ${pages + 1}]!`);
   }
 
   return await prisma.ad.findMany({
