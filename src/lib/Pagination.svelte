@@ -89,25 +89,24 @@
     <ul class="pagination-list">
       <li>
         {#if !previousButtonDisabled}
-          <a class="pagination-previous" href={hrefPrev} on:click={previousPage}>Previous</a>
+          <button class="pagination-previous" on:click={previousPage}>Previous</button>
         {:else}
           <p class="pagination-previous is-disabled" title="This is the first page">Previous</p>
         {/if}
       </li>
 
       <li>
-        <a
+        <button
           class="pagination-link {leftJumpCssClass}"
-          href={hrefMinPage}
           on:click={() => goToPage(minPage)}
-          aria-label="Goto page {minPage}">{minPage}</a
+          aria-label="Goto page {minPage}">{minPage}</button
         >
       </li>
       <li><span class="pagination-ellipsis {leftJumpCssClass}">&hellip;</span></li>
 
       <li>
-        <a class="pagination-link {leftPageCssClass}" on:click={previousPage} href={hrefPrev}
-          >{currentPage - 1}</a
+        <button class="pagination-link {leftPageCssClass}" on:click={previousPage}
+          >{currentPage - 1}</button
         >
       </li>
 
@@ -116,27 +115,25 @@
       </li>
 
       <li>
-        <a
+        <button
           class="pagination-link {rightPageCssClass}"
-          href={hrefNext}
           on:click={nextPage}
-          aria-label="Goto page {currentPage + 1}">{currentPage + 1}</a
+          aria-label="Goto page {currentPage + 1}">{currentPage + 1}</button
         >
       </li>
 
       <li><span class="pagination-ellipsis {rightJumpCssClass}">&hellip;</span></li>
       <li>
-        <a
+        <button
           class="pagination-link {rightJumpCssClass}"
-          href={hrefMaxPage}
           on:click={() => goToPage(maxPage)}
-          aria-label="Goto page {maxPage}">{maxPage}</a
+          aria-label="Goto page {maxPage}">{maxPage}</button
         >
       </li>
 
       {#if !nextButtonDisabled}
         <li>
-          <a class="pagination-next" href={hrefNext} on:click={nextPage}>Next page</a>
+          <button class="pagination-next" on:click={nextPage}>Next page</button>
         </li>
       {:else}
         <li>
