@@ -1,18 +1,9 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
+  import type { AdPosting } from './server/types';
 
-  export let title: string;
-  export let price: number;
-  export let currency: string;
-  export let roomQty: number;
-  export let area: number;
-  export let atFloor: number;
-  export let maxFloor: number | null;
-  export let street: string;
-  export let houseNumber: string;
-  export let foundAt: number;
-  export let postedAt: number;
+  export let ad: AdPosting;
   export let imageUrls: string[];
 
   let Carousel;
@@ -89,19 +80,23 @@
         </figure>
       </div>
       <div class="media-content">
-        <p class="title is-4">{title}</p>
-        <p class="subtitle mb-2">{street} {houseNumber}</p>
+        <p class="title is-4">{ad.title}</p>
+        <p class="subtitle mb-2">{ad.building.street} {ad.building.houseNumber}</p>
         <div class="columns is-multiline is-gapless">
-          <div class="column is-full"><p>💵 {price} {currency}</p></div>
-          <div class="column is-full"><p>#️⃣ {roomQty} кімнати</p></div>
-          <div class="column is-full"><p>🔲 {area}м²</p></div>
-          <div class="column is-full"><p>📶 Поверх: {atFloor}/{maxFloor}</p></div>
+          <div class="column is-full"><p>💵 {ad.price} {ad.currency}</p></div>
+          <div class="column is-full"><p>#️⃣ {ad.roomQty} кімнати</p></div>
+          <div class="column is-full"><p>🔲 {ad.totalArea}м²</p></div>
+          <div class="column is-full"><p>📶 Поверх: {ad.atFloor}/{ad.building.maxFloors}</p></div>
         </div>
         <p class="subtitle is-7 mt-3 mb-0 has-text-left">
-          Створено: <time datetime="2016-1-1">{new Date(postedAt).toLocaleString()}</time>
+          Створено: <time datetime="2016-1-1"
+            >{new Date(ad.postedAtSec * 1000).toLocaleString()}</time
+          >
         </p>
         <p class="subtitle is-7 mb-3 has-text-left">
-          Знайдено: <time datetime="2016-1-1">{new Date(foundAt).toLocaleString()}</time>
+          Знайдено: <time datetime="2016-1-1"
+            >{new Date(ad.foundAtSec * 1000).toLocaleString()}</time
+          >
         </p>
         <div class="container">
           <div class="field is-grouped mb-2">
