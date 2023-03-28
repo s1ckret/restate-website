@@ -16,7 +16,7 @@
   <div class="hero-foot">
     <footer class="footer pb-5 pt-5">
       <div class="content has-text-centered">
-        <p>Created with &lt;3 by s1ckret</p>
+        <p>Created with love by @s1ckret</p>
       </div>
     </footer>
   </div>
