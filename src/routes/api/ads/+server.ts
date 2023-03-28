@@ -95,6 +95,11 @@ async function getPageByBuildingId(page: number, limit: number, buildingId: numb
           lat: true,
           lon: true
         }
+      },
+      photo: {
+        select: {
+          key: true
+        }
       }
     },
     where: { buildingId: buildingId },

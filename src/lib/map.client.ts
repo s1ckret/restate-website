@@ -26,12 +26,12 @@ const create: CreateMapFn = (mapId, options) => {
   return map;
 };
 
-function addGeoJSON(id: number, geojson: any) {
+function addGeoJSON(id: number, geojson: any, onClick: (id: number) => void) {
   L.geoJson(geojson, {
     onEachFeature: (feature, layer) => {
       layer.on({
         click: (e) => {
-          console.log(id);
+          onClick(id);
         }
       });
     }

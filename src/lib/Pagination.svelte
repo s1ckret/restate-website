@@ -1,16 +1,54 @@
 <script lang="ts">
-  export let pages = 100;
+  import { goto } from '$app/navigation';
+
+  export let pages = 1;
   export let currentPage = 1;
+  export let buildingId: number | null = null;
   let minPage = 1;
   let maxPage = pages;
+
+  $: setUrl(currentPage, buildingId), refreshHrefs(currentPage, buildingId);
+
+  function setUrl(currentPage: number, buildingId: number | null) {
+    let query = new URLSearchParams();
+
+    query.set('page', `${currentPage}`);
+    if (buildingId) {
+      query.set('buildingId', `${buildingId}`);
+    }
+
+    goto(`?${query.toString()}`, { replaceState: true });
+  }
+
   let previousButtonDisabled = false;
   let nextButtonDisabled = false;
+  let leftPageCssClass = '';
+  let rightPageCssClass = '';
+  let leftJumpCssClass = '';
+  let rightJumpCssClass = '';
 
-  let leftPageVisible = false;
-  let rightPageVisible = false;
+  let hrefNext = '';
+  let hrefPrev = '';
+  let hrefMinPage = '';
+  let hrefMaxPage = '';
 
-  let leftJumpVisible = false;
-  let rightJumpVisible = false;
+  function refreshHrefs(currentPage: number, buildingId: number | null) {
+    hrefNext = buildingId
+      ? `/map?buildingId=${buildingId}&page=${currentPage + 1}`
+      : `/map?page=${currentPage + 1}`;
+
+    hrefPrev = buildingId
+      ? `/map?buildingId=${buildingId}&page=${currentPage - 1}`
+      : `/map?page=${currentPage - 1}`;
+
+    hrefMinPage = buildingId
+      ? `/map?buildingId=${buildingId}&page=${minPage}`
+      : `/map?page=${minPage}`;
+
+    hrefMaxPage = buildingId
+      ? `/map?buildingId=${buildingId}&page=${maxPage}`
+      : `/map?page=${maxPage}`;
+  }
 
   refreshButtons();
 
@@ -34,112 +72,80 @@
   function refreshButtons() {
     previousButtonDisabled = currentPage <= minPage;
     nextButtonDisabled = currentPage >= maxPage;
-    leftPageVisible = currentPage > minPage;
-    rightPageVisible = currentPage < maxPage;
-    leftJumpVisible = currentPage >= minPage + 2;
-    rightJumpVisible = currentPage <= maxPage - 2;
+    const leftPageVisible = currentPage > minPage;
+    const rightPageVisible = currentPage < maxPage;
+    const leftJumpVisible = currentPage >= minPage + 2;
+    const rightJumpVisible = currentPage <= maxPage - 2;
+
+    leftPageCssClass = leftPageVisible ? '' : 'is-invisible';
+    rightPageCssClass = rightPageVisible ? '' : 'is-invisible';
+    leftJumpCssClass = leftJumpVisible ? '' : 'is-invisible';
+    rightJumpCssClass = rightJumpVisible ? '' : 'is-invisible';
   }
 </script>
 
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-  <ul class="pagination-list">
-    {#if !previousButtonDisabled}
+{#key pages}
+  <nav class="pagination is-centered">
+    <ul class="pagination-list">
       <li>
-        <a class="pagination-previous" href="/map?page={currentPage}" on:click={previousPage}
-          >Previous</a
-        >
+        {#if !previousButtonDisabled}
+          <a class="pagination-previous" href={hrefPrev} on:click={previousPage}>Previous</a>
+        {:else}
+          <p class="pagination-previous is-disabled" title="This is the first page">Previous</p>
+        {/if}
       </li>
-    {:else}
-      <li>
-        <a
-          class="pagination-previous is-disabled"
-          title="This is the first page"
-          on:click={previousPage}>Previous</a
-        >
-      </li>
-    {/if}
 
-    {#if leftJumpVisible}
       <li>
         <a
-          class="pagination-link"
-          href="/map?page={minPage}"
+          class="pagination-link {leftJumpCssClass}"
+          href={hrefMinPage}
           on:click={() => goToPage(minPage)}
           aria-label="Goto page {minPage}">{minPage}</a
         >
       </li>
-      <li><span class="pagination-ellipsis">&hellip;</span></li>
-    {:else}
-      <li><a class="pagination-link is-invisible">{minPage}</a></li>
-      <li><span class="pagination-ellipsis is-invisible">&hellip;</span></li>
-    {/if}
+      <li><span class="pagination-ellipsis {leftJumpCssClass}">&hellip;</span></li>
 
-    {#if leftPageVisible}
       <li>
-        <a
-          class="pagination-link"
-          on:click={previousPage}
-          href="/map?page={currentPage}"
-          aria-label="Goto page {currentPage - 1}">{currentPage - 1}</a
+        <a class="pagination-link {leftPageCssClass}" on:click={previousPage} href={hrefPrev}
+          >{currentPage - 1}</a
         >
       </li>
-    {:else}
-      <li><a class="pagination-link is-invisible">{currentPage - 1}</a></li>
-    {/if}
 
-    <li>
-      <a
-        class="pagination-link is-current"
-        href="/map?page={currentPage}"
-        aria-label="Page {currentPage}"
-        aria-current="page">{currentPage}</a
-      >
-    </li>
-    {#if rightPageVisible}
+      <li>
+        <p class="pagination-link is-current">{currentPage}</p>
+      </li>
+
       <li>
         <a
-          class="pagination-link"
-          href="/map?page={currentPage}"
+          class="pagination-link {rightPageCssClass}"
+          href={hrefNext}
           on:click={nextPage}
           aria-label="Goto page {currentPage + 1}">{currentPage + 1}</a
         >
       </li>
-    {:else}
-      <li>
-        <a class="pagination-link is-invisible">{currentPage + 1}</a>
-      </li>
-    {/if}
 
-    {#if rightJumpVisible}
-      <li><span class="pagination-ellipsis">&hellip;</span></li>
+      <li><span class="pagination-ellipsis {rightJumpCssClass}">&hellip;</span></li>
       <li>
         <a
-          class="pagination-link"
-          href="/map?page={maxPage}"
+          class="pagination-link {rightJumpCssClass}"
+          href={hrefMaxPage}
           on:click={() => goToPage(maxPage)}
           aria-label="Goto page {maxPage}">{maxPage}</a
         >
       </li>
-    {:else}
-      <li><span class="pagination-ellipsis is-invisible">&hellip;</span></li>
-      <li>
-        <a class="pagination-link is-invisible">{maxPage}</a>
-      </li>
-    {/if}
 
-    {#if !nextButtonDisabled}
-      <li>
-        <a class="pagination-next" href="/map?page={currentPage}" on:click={nextPage}>Next page</a>
-      </li>
-    {:else}
-      <li>
-        <a class="pagination-next is-disabled" title="This is the last page" on:click={nextPage}
-          >Next page</a
-        >
-      </li>
-    {/if}
-  </ul>
-</nav>
+      {#if !nextButtonDisabled}
+        <li>
+          <a class="pagination-next" href={hrefNext} on:click={nextPage}>Next page</a>
+        </li>
+      {:else}
+        <li>
+          <p class="pagination-next is-disabled" title="This is the last page">Next page</p>
+        </li>
+      {/if}
+    </ul>
+  </nav>
+{/key}
 
 <style>
   .is-disabled {

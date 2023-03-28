@@ -1,6 +1,11 @@
 <script lang="ts">
   import Map from '$lib/Map.svelte';
   import Listing from '$lib/Listing.svelte';
+  import { page } from '$app/stores';
+
+  let buildingId: number | null = $page.url.searchParams.get('buildingId')
+    ? Number($page.url.searchParams.get('buildingId'))
+    : null;
 </script>
 
 <link
@@ -12,11 +17,15 @@
 
 <div class="columns is-variable is-6">
   <div class="column is-one-half" style="height: 86vh;">
-    <Listing />
+    <Listing bind:buildingId />
   </div>
 
   <div class="column is-one-half p-0">
-    <Map />
+    <Map
+      onClick={(id) => {
+        buildingId = id;
+      }}
+    />
   </div>
 </div>
 
