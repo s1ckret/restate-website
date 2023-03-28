@@ -55,7 +55,9 @@ async function getPage(page: number, limit: number) {
           id: true,
           street: true,
           houseNumber: true,
-          maxFloors: true
+          maxFloors: true,
+          lat: true,
+          lon: true
         }
       },
       photo: {
@@ -89,7 +91,9 @@ async function getPageByBuildingId(page: number, limit: number, buildingId: numb
           id: true,
           street: true,
           houseNumber: true,
-          maxFloors: true
+          maxFloors: true,
+          lat: true,
+          lon: true
         }
       }
     },

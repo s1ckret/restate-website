@@ -38,4 +38,14 @@ function addGeoJSON(id: number, geojson: any) {
   }).addTo(map);
 }
 
+export function showOnMap(lat: number, lon: number) {
+  const marker = new L.Marker([lat, lon]);
+  map.addLayer(marker);
+  return marker;
+}
+
+export function hideMarker(marker: any) {
+  return map.removeLayer(marker);
+}
+
 export { create, addGeoJSON };

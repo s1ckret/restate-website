@@ -5,35 +5,26 @@
 
   export let ad: AdPosting;
   export let imageUrls: string[];
+  let shownOnMap = false;
+  let marker: any;
 
-  let Carousel;
+  let Carousel: any;
   onMount(async () => {
     const module = await import('svelte-carousel');
     Carousel = module.default;
   });
 
-  const items = [
-    {
-      name: 'Leonardo',
-      age: 26,
-      location: 'Italy'
-    },
-    {
-      name: 'Maria',
-      age: 27,
-      location: 'Brazil'
-    },
-    {
-      name: 'Oliver',
-      age: 28,
-      location: 'United States'
-    },
-    {
-      name: 'Margarida',
-      age: 29,
-      location: 'Portugal'
-    }
-  ];
+  async function showOnMap() {
+    const mapLib = await import('./map.client');
+    marker = mapLib.showOnMap(ad.building.lat, ad.building.lon);
+    shownOnMap = true;
+  }
+
+  async function hideMarker() {
+    shownOnMap = false;
+    const mapLib = await import('./map.client');
+    mapLib.hideMarker(marker);
+  }
 </script>
 
 <div class="card">
@@ -107,7 +98,11 @@
               <button class="button is-link">Open in new tab</button>
             </p>
             <p class="control">
-              <button class="button">Show on Map</button>
+              {#if shownOnMap}
+                <button class="button" on:click={hideMarker}>Hide marker</button>
+              {:else}
+                <button class="button" on:click={showOnMap}>Show on Map</button>
+              {/if}
             </p>
           </div>
         </div>

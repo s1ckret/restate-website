@@ -6,6 +6,8 @@ export type AdPosting = ad & {
     street: string;
     houseNumber: string;
     maxFloors: number | null;
+    lat: number;
+    lon: number;
   };
   photo: {
     key: string;
