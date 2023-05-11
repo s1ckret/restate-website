@@ -19,6 +19,7 @@ export const GET = (async ({ url }) => {
   }
 
   try {
+    console.log(buildingId);
     let ads;
     if (buildingId != 0) {
       ads = await getPageByBuildingId(page - 1, limit, buildingId);
@@ -75,6 +76,7 @@ async function getPage(page: number, limit: number) {
 
   return ads;
 }
+
 
 async function getPageByBuildingId(page: number, limit: number, buildingId: number) {
   const adCount = await prisma.ad.count({ where: { buildingId: buildingId } });

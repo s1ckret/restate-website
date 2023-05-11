@@ -19,7 +19,6 @@
   <div class="column is-one-half" style="height: 86vh;">
     <Listing bind:buildingId />
   </div>
-
   <div class="column is-one-half p-0">
     <Map
       onClick={(id) => {

@@ -95,7 +95,7 @@
               <button class="button is-danger">Favorite</button>
             </p> -->
             <p class="control">
-              <button class="button is-link">Open in new tab</button>
+              <a class="button is-link" target="_blank" href="/expandedad?buildingId={ad.id}" >Open in new tab</a>
             </p>
             <p class="control">
               {#if shownOnMap}

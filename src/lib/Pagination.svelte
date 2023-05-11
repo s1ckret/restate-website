@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
 
-  export let pages = 1;
+  export let pages = 2;
   export let currentPage = 1;
   export let buildingId: number | null = null;
   let minPage = 1;
