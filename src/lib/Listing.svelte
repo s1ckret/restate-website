@@ -1,7 +1,7 @@
 <script lang="ts">
-  import AdCard from './AdCard.svelte';
+  import FlatPosting from './FlatPosting.svelte';
   import Pagination from './Pagination.svelte';
-  import type { AdPosting } from './server/types';
+  import type { Posting } from './server/types';
   import { page } from '$app/stores';
 
   export let buildingId: number | null = null;
@@ -25,30 +25,32 @@
   let rememberPage = Number(
     $page.url.searchParams.get('buildingId') ? '1' : $page.url.searchParams.get('page') ?? '1'
   );
-  let oldAds: AdPosting[] = [];
+  let oldAds: Posting[] = [];
 
-  const fetchAds = async (buildingId: number | null): Promise<AdPosting[]> => {
+  const fetchAds = async (buildingId: number | null): Promise<Posting[]> => {
     if (buildingId) {
-      const ads = await fetch(`/api/ads?limit=2&page=${currentPage}&buildingId=${buildingId}`);
-      const response = await ads.json();
+      const postings = await fetch(
+        `/api/postings?limit=2&page=${currentPage}&buildingId=${buildingId}`
+      );
+      const response = await postings.json();
       console.log(response);
       return response;
     } else {
-      const ads = await fetch(`/api/ads?limit=2&page=${currentPage}`);
-      const response = await ads.json();
-      oldAds = response as AdPosting[];
+      const postings = await fetch(`/api/postings?limit=2&page=${currentPage}`);
+      const response = await postings.json();
+      oldAds = response as Posting[];
       return response;
     }
   };
 
   const fetchPages = async (buildingId: number | null): Promise<number> => {
     if (buildingId) {
-      const ads = await fetch(`/api/ads/pages?size=2&buildingId=${buildingId}`);
-      const response = await ads.json();
+      const postings = await fetch(`/api/postings/pages?size=2&buildingId=${buildingId}`);
+      const response = await postings.json();
       return response;
     } else {
-      const ads = await fetch(`/api/ads/pages?size=2`);
-      const response = await ads.json();
+      const postings = await fetch(`/api/postings/pages?size=2`);
+      const response = await postings.json();
       return response;
     }
   };
@@ -57,11 +59,11 @@
 {#key currentPage}
   {#await fetchAds(buildingId)}
     {#each oldAds as ad}
-      <AdCard {ad} imageUrls={ad.photo.map((it) => it.key)} />
+      <FlatPosting {ad} imageUrls={ad.photo.map((it) => it.key)} />
     {/each}
-  {:then ads}
-    {#each ads as ad}
-      <AdCard {ad} imageUrls={ad.photo.map((it) => it.key)} />
+  {:then postings}
+    {#each postings as ad}
+      <FlatPosting {ad} imageUrls={ad.photo.map((it) => it.key)} />
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>
@@ -69,7 +71,7 @@
 {/key}
 
 {#await fetchPages(buildingId) then pages}
-  <div class="container" style="margin-top: 2.5rem!important;">
+  <div class="container" style="margin-top: 1.5rem!important;">
     {#if buildingId}
       <button
         class="button is-link back"

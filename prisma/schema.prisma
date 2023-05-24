@@ -34,7 +34,7 @@ model ad {
 model building {
   id          Int    @id @default(autoincrement())
   osmId       Int    @unique(map: "osmId")
-  ads         ad[]
+  postings         ad[]
   country     String @db.VarChar(255)
   city        String @db.VarChar(255)
   street      String @db.VarChar(255)
@@ -56,7 +56,7 @@ model origin {
   id   Int    @id @default(autoincrement())
   name String @unique(map: "name") @db.VarChar(255)
   url  String @unique(map: "url") @db.VarChar(255)
-  ads  ad[]
+  postings  ad[]
 }
 
 model photoFeature {

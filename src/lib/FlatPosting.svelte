@@ -1,9 +1,9 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
-  import type { AdPosting } from './server/types';
+  import type { Posting } from './server/types';
 
-  export let ad: AdPosting;
+  export let ad: Posting;
   export let imageUrls: string[];
   let shownOnMap = false;
   let marker: any;

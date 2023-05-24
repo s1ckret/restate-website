@@ -1,6 +1,6 @@
 import type { ad, Prisma } from '@prisma/client';
 
-export type AdPosting = ad & {
+export type Posting = ad & {
   building: {
     id: number;
     street: string;

@@ -19,13 +19,13 @@ export const GET = (async ({ url }) => {
   }
 
   try {
-    let ads;
+    let postings;
     if (buildingId != 0) {
-      ads = await getPageByBuildingId(page - 1, limit, buildingId);
+      postings = await getPageByBuildingId(page - 1, limit, buildingId);
     } else {
-      ads = await getPage(page - 1, limit);
+      postings = await getPage(page - 1, limit);
     }
-    return new Response(JSON.stringify(ads), { status: 200 });
+    return new Response(JSON.stringify(postings), { status: 200 });
   } catch (e) {
     if (e instanceof Error) {
       return new Response(e.message, { status: 400 });
@@ -48,7 +48,7 @@ async function getPage(page: number, limit: number) {
   const range = (start: number, end: number) =>
     Array.from({ length: end - start }, (v, k) => k + start);
 
-  const ads = await prisma.ad.findMany({
+  const postings = await prisma.ad.findMany({
     include: {
       building: {
         select: {
@@ -73,7 +73,7 @@ async function getPage(page: number, limit: number) {
     }
   });
 
-  return ads;
+  return postings;
 }
 
 async function getPageByBuildingId(page: number, limit: number, buildingId: number) {
