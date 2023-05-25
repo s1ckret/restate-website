@@ -4,4 +4,5 @@
     Our product uses advanced object detection technology to make apartment hunting a breeze.
   </h2>
   <a href="/map?page=1" class="button is-large is-link"> Try Our Map </a>
+  <a href="/demo" class="button is-large is-success ml-3"> Try Our Demo </a>
 </div>
