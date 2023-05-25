@@ -3,13 +3,22 @@
   import TabButton from '$lib/TabButton.svelte';
   import UploadIcon from '$lib/UploadIcon.svelte';
 
+  export let data;
+
   let fileInput;
+  let imgFile;
   let imgSrc;
   let fileName = '';
   let loadingClass = '';
   let currentTab = 'Results';
+  let selectedModelKey;
+  let detections;
+  let detectedObjects = [];
+  let detectionsForTextArea;
 
   const setImage = (image) => {
+    console.log(image);
+    imgFile = image;
     let reader = new FileReader();
     reader.readAsDataURL(image);
     reader.onload = (e) => {
@@ -19,9 +28,19 @@
 
   const detect = () => {
     loadingClass = 'is-loading';
-    setTimeout(() => {
+    let formData = new FormData();
+    formData.append('file', imgFile);
+
+    fetch('http://centernet.s1ckret.com/detectors/' + selectedModelKey + '/image', {
+      method: 'POST',
+      body: formData
+    }).then(async (response) => {
+      detections = await response.json();
+      console.log(detections);
+      detectionsForTextArea = JSON.stringify(detections, null, 4);
+      detectedObjects = detections['detections'].map((it) => it.label);
       loadingClass = '';
-    }, 1000);
+    });
   };
 </script>
 
@@ -70,12 +89,34 @@
       <h1 class="title is-2">Try out our detection models!</h1>
       <div class="columns">
         <div class="column is-10">
-          <Dropdown models={['model_20 | v0.0.1', 'model_alpha_13_15 | v1.0.0-alpha']} />
+          <Dropdown modelKeyToName={data.modelKeyToName} bind:selected={selectedModelKey} />
         </div>
         <div class="column is-2">
           <button class="button is-success {loadingClass}" on:click={detect}>Detect!</button>
         </div>
       </div>
+      {#if selectedModelKey}
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><b>Name</b></td>
+              <td>{data.modelAbouts[selectedModelKey].metadata.model_name}</td>
+            </tr>
+            <tr>
+              <td><b>Description</b></td>
+              <td>{data.modelAbouts[selectedModelKey].metadata.model_description}</td>
+            </tr>
+            <tr>
+              <td><b>Version</b></td>
+              <td>{data.modelAbouts[selectedModelKey].metadata.model_version}</td>
+            </tr>
+            <tr>
+              <td><b>Categories</b></td>
+              <td>{Object.values(data.modelAbouts[selectedModelKey].id_to_categories)}</td>
+            </tr>
+          </tbody>
+        </table>
+      {/if}
       <div class="tabs is-centered is-boxed">
         <ul>
           <TabButton text="Results" bind:currentTab />
@@ -87,11 +128,9 @@
           <div class="card-content">
             <div class="content">
               <ul>
-                <li>TV</li>
-                <li>Bed</li>
-                <li>Washing machine</li>
-                <li>Stovetop</li>
-                <li>Oven</li>
+                {#each detectedObjects as o}
+                  <li>{o}</li>
+                {/each}
               </ul>
             </div>
           </div>
@@ -99,7 +138,12 @@
       {:else}
         <div class="card">
           <div class="card-content">
-            <textarea class="textarea is-success" placeholder="JSON" />
+            <textarea
+              class="textarea is-success"
+              placeholder="JSON"
+              readonly
+              bind:value={detectionsForTextArea}
+            />
           </div>
         </div>
       {/if}
@@ -168,7 +212,7 @@
     border-bottom-width: 1px;
   }
 
-  .textarea {
-    height: 44vh;
+  .table {
+    width: 100%;
   }
 </style>

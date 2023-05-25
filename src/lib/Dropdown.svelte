@@ -1,12 +1,13 @@
 <script>
-  export let models;
-  export let selected = 'Select detection model...';
+  export let modelKeyToName;
+  export let selected;
+  let selectedName = 'Select detection model...';
 </script>
 
 <div class="dropdown is-hoverable">
   <div class="dropdown-trigger">
     <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
-      <span>{selected}</span>
+      <span>{selectedName}</span>
       <span class="icon is-small">
         <i class="fas fa-angle-down" aria-hidden="true" />
       </span>
@@ -14,20 +15,20 @@
   </div>
   <div class="dropdown-menu" id="dropdown-menu2" role="menu">
     <div class="dropdown-content">
-      {#each models as model}
-        {#if model === selected}
+      {#each Object.entries(modelKeyToName) as [modelKey, modelName]}
+        {#if modelKey === selected}
           <div class="dropdown-item selected">
-            <p>{model}</p>
+            <p>{modelName}</p>
           </div>
         {:else}
           <button
             class="dropdown-item"
             on:click={() => {
-              console.log(model);
-              selected = model;
+              selected = modelKey;
+              selectedName = modelName;
             }}
           >
-            {model}
+            {modelName}
           </button>
         {/if}
         <hr class="dropdown-divider" />
