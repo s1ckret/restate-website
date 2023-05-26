@@ -17,20 +17,13 @@
   let canvas;
   let canvasContext;
 
+  let sliderValue = 30;
+
   const setImage = (file) => {
     console.log(file);
     fileName = file.name;
     imgFile = file;
-    var img = new Image();
-    img.onload = function () {
-      canvasContext = canvas.getContext('2d');
-      console.log('Canvas&image size', img.width, img.height);
-      canvas.width = img.width;
-      canvas.height = img.height;
-      canvasContext.drawImage(img, 0, 0);
-      URL.revokeObjectURL(img.src);
-    };
-    img.src = URL.createObjectURL(file);
+    drawImage(imgFile);
   };
 
   const detect = () => {
@@ -43,19 +36,52 @@
       body: formData
     }).then(async (response) => {
       detections = await response.json();
-      console.log(detections);
       detectionsForTextArea = JSON.stringify(detections, null, 4);
-      detectedObjects = detections['detections'].map((it) => it.label);
-      drawDetections(detections['detections']);
+      detectedObjects = detections['detections'].map((it) => it.label).filter(onlyUnique);
+      let f = filterByDetectionThreshold(detections['detections'], sliderValue);
+      drawDetections(f);
       loadingClass = '';
     });
   };
 
-  function drawDetections(detections) {
-    for (const detection of detections) {
-      drawBbox(detection.bbox);
-      drawLabel(detection.label, detection.bbox[0], detection.bbox[1]);
-    }
+  function onlyUnique(value, index, array) {
+    return array.indexOf(value) === index;
+  }
+
+  function filterByDetectionThreshold(detections, threshold) {
+    console.log(detections);
+    return detections.filter((it) => {
+      return it.confidence > threshold / 100;
+    });
+  }
+
+  function drawImage(file) {
+    var img = new Image();
+    img.onload = function () {
+      canvasContext = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvasContext.drawImage(img, 0, 0);
+      URL.revokeObjectURL(img.src);
+    };
+    img.src = URL.createObjectURL(file);
+  }
+
+  async function drawDetections(detections) {
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    var img = new Image();
+    img.onload = function () {
+      canvasContext = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvasContext.drawImage(img, 0, 0);
+      URL.revokeObjectURL(img.src);
+      for (const detection of detections) {
+        drawBbox(detection.bbox);
+        drawLabel(detection.label, detection.bbox[0], detection.bbox[1]);
+      }
+    };
+    img.src = URL.createObjectURL(imgFile);
   }
 
   function drawBbox(bbox) {
@@ -67,20 +93,21 @@
 
   function drawLabel(txt, x, y) {
     let padding = 8;
-    let font = '24px arial';
+    let fontSize = 24;
+    let font = fontSize + 'px arial';
     canvasContext.font = font;
     canvasContext.textBaseline = 'top';
     canvasContext.fillStyle = 'blue';
 
     var width = canvasContext.measureText(txt).width;
-    canvasContext.fillRect(x, y, width + padding, parseInt(font, 10) + padding);
+    canvasContext.fillRect(x, y - fontSize, width + padding, fontSize + padding);
 
     canvasContext.fillStyle = 'white';
-    canvasContext.fillText(txt, x + padding / 2, y + padding / 2);
+    canvasContext.fillText(txt, x + padding / 2, y - fontSize + padding / 2);
   }
 </script>
 
-<div class="container">
+<div class="container special">
   <div class="columns">
     <div class="column is-half">
       {#if imgFile}
@@ -126,6 +153,25 @@
           <span class="file-name">{fileName}</span>
         </label>
       </div>
+      <div>
+        <h3>Detection threshold: {sliderValue}</h3>
+      </div>
+      <input
+        bind:value={sliderValue}
+        on:mouseup={async () => {
+          console.log('mouse up', sliderValue);
+          if (detections) {
+            let filtered = filterByDetectionThreshold(detections['detections'], sliderValue);
+            console.log(filtered);
+            await drawDetections(filtered);
+          }
+        }}
+        class="slider is-circle is-success has-output"
+        step="1"
+        min="0"
+        max="100"
+        type="range"
+      />
     </div>
     <div class="column is-half">
       <h1 class="title is-2">Try out our detection models!</h1>
@@ -194,6 +240,10 @@
 </div>
 
 <style>
+  .slider {
+    width: 100%;
+  }
+
   .image,
   #myCanvas {
     width: 70vh;
@@ -257,5 +307,9 @@
 
   .table {
     width: 100%;
+  }
+
+  :global(.hero-body:has(.special)) {
+    align-items: start !important;
   }
 </style>

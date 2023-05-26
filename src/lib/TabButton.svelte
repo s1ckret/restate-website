@@ -8,7 +8,6 @@
   function setActiveClass(a) {
     if (a === text) {
       activeClass = 'is-active';
-      console.log('active', a, text);
     } else {
       activeClass = '';
     }
