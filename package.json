@@ -37,6 +37,7 @@
   "dependencies": {
     "@prisma/client": "^4.11.0",
     "bulma": "^0.9.4",
+    "bulma-slider": "^2.0.5",
     "leaflet": "^1.9.3"
   }
 }
