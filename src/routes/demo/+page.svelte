@@ -7,7 +7,6 @@
 
   let fileInput;
   let imgFile;
-  let imgSrc;
   let fileName = '';
   let loadingClass = '';
   let currentTab = 'Results';
@@ -15,15 +14,23 @@
   let detections;
   let detectedObjects = [];
   let detectionsForTextArea;
+  let canvas;
+  let canvasContext;
 
-  const setImage = (image) => {
-    console.log(image);
-    imgFile = image;
-    let reader = new FileReader();
-    reader.readAsDataURL(image);
-    reader.onload = (e) => {
-      imgSrc = e.target.result;
+  const setImage = (file) => {
+    console.log(file);
+    fileName = file.name;
+    imgFile = file;
+    var img = new Image();
+    img.onload = function () {
+      canvasContext = canvas.getContext('2d');
+      console.log('Canvas&image size', img.width, img.height);
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvasContext.drawImage(img, 0, 0);
+      URL.revokeObjectURL(img.src);
     };
+    img.src = URL.createObjectURL(file);
   };
 
   const detect = () => {
@@ -39,17 +46,53 @@
       console.log(detections);
       detectionsForTextArea = JSON.stringify(detections, null, 4);
       detectedObjects = detections['detections'].map((it) => it.label);
+      drawDetections(detections['detections']);
       loadingClass = '';
     });
   };
+
+  function drawDetections(detections) {
+    for (const detection of detections) {
+      drawBbox(detection.bbox);
+      drawLabel(detection.label, detection.bbox[0], detection.bbox[1]);
+    }
+  }
+
+  function drawBbox(bbox) {
+    canvasContext.lineWidth = 5;
+    canvasContext.strokeStyle = 'blue';
+    // x, y, width, height
+    canvasContext.strokeRect(bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]);
+  }
+
+  function drawLabel(txt, x, y) {
+    let padding = 8;
+    let font = '24px arial';
+    canvasContext.font = font;
+    canvasContext.textBaseline = 'top';
+    canvasContext.fillStyle = 'blue';
+
+    var width = canvasContext.measureText(txt).width;
+    canvasContext.fillRect(x, y, width + padding, parseInt(font, 10) + padding);
+
+    canvasContext.fillStyle = 'white';
+    canvasContext.fillText(txt, x + padding / 2, y + padding / 2);
+  }
 </script>
 
 <div class="container">
   <div class="columns">
     <div class="column is-half">
-      {#if imgSrc}
+      {#if imgFile}
         <div class="flex-center">
-          <img class="image" src={imgSrc} on:click={() => fileInput.click()} />
+          <canvas
+            id="myCanvas"
+            width="600"
+            height="600"
+            bind:this={canvas}
+            on:click={() => fileInput.click()}
+          />
+          <!-- <img class="image" src={imgSrc} on:click={() => fileInput.click()} /> -->
         </div>
       {:else}
         <div class="flex-center">
@@ -73,7 +116,6 @@
             accept="image/jpeg, image/png, image/jpg"
             bind:this={fileInput}
             on:change={(e) => {
-              fileName = e.target.files[0].name;
               setImage(e.target.files[0]);
             }}
           />
@@ -152,9 +194,10 @@
 </div>
 
 <style>
-  .image {
+  .image,
+  #myCanvas {
     width: 70vh;
-    height: 70vh;
+    /* height: 70vh; */
     border-radius: 4px;
     border-width: 2px;
     border-color: #dbdbdb;
